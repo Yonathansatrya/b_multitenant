@@ -10,10 +10,10 @@ class Customer extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'organization_id'];
 
-    public function organization(): BelongsTo
+    public function tenant(): BelongsTo
     {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsTo(Organization::class, 'organization_id');
     }
 }

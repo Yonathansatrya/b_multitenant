@@ -28,7 +28,9 @@ class User extends Authenticatable implements HasTenants
         'password' => 'hashed',
     ];
 
-    // Relasi ke banyak organisasi
+    /**
+     * Relasi ke banyak organisasi melalui tabel pivot `organization_user`
+     */
     public function organizations(): BelongsToMany
     {
         return $this->belongsToMany(Organization::class)
@@ -36,29 +38,37 @@ class User extends Authenticatable implements HasTenants
                     ->withTimestamps();
     }
 
-    // Relasi ke organisasi saat ini
+    /**
+     * Relasi ke organisasi yang sedang aktif (current organization)
+     */
     public function currentOrganization()
     {
         return $this->belongsTo(Organization::class, 'current_organization_id');
     }
 
-    // Mendapatkan peran user dalam organisasi saat ini
-    public function getRoleInCurrentOrganization()
+    /**
+     * Mendapatkan role user dalam organisasi yang sedang aktif
+     */
+    public function getRoleInCurrentOrganization(): ?string
     {
-        $organization = $this->organizations()
-            ->where('organization_id', $this->current_organization_id)
-            ->first();
-
-        return $organization?->pivot->role ?? null;
+        return $this->organizations()
+                    ->where('organization_id', $this->current_organization_id)
+                    ->first()?->pivot->role;
     }
 
-    // Mengecek apakah user bisa mengakses organisasi (tenant)
+    /**
+     * Mengecek apakah user memiliki akses ke tenant (organization tertentu)
+     */
     public function canAccessTenant(Model $tenant): bool
     {
-        return $this->organizations()->where('organization_id', $tenant->id)->exists();
+        return $this->organizations()
+                    ->where('organization_id', $tenant->id)
+                    ->exists();
     }
 
-    // Mendapatkan daftar organisasi yang dapat diakses oleh user
+    /**
+     * Mengambil daftar organisasi yang bisa diakses oleh user
+     */
     public function getTenants(Panel $panel): Collection
     {
         return $this->organizations()->get();

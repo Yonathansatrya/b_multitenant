@@ -14,6 +14,7 @@ use App\Filament\Resources\UserResource\Pages;
 
 class UserResource extends Resource
 {
+    protected static ?string $tenantOwnershipRelationshipName = 'tenant';
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';

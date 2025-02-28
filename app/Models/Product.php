@@ -10,6 +10,12 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nama_product'
+        'nama_product',
+        'organization_id'
     ];
+
+    public function tenant()
+    {
+        return $this->belongsTo(Organization::class, 'organization_id');
+    }
 }

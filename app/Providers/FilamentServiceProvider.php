@@ -23,24 +23,6 @@ class FilamentServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Panel::configureUsing(function (Panel $panel) {
-            $panel->middleware([
-                Authenticate::class,
-                PermissionMiddleware::class,
-            ]);
-        });
-    }
-
-    public function panel(Panel $panel): Panel
-    {
-        return $panel
-            ->middleware([
-                Authenticate::class,
-                \Spatie\Permission\Middleware\PermissionMiddleware::class,
-            ])
-            ->resources([
-                \App\Filament\Resources\UserResource::class,
-                \App\Filament\Resources\CustomerResource::class,
-            ]);
+        //
     }
 }

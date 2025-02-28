@@ -69,6 +69,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->tenant(
                 model: Organization::class,
+                ownershipRelationship: 'tenant',
                 slugAttribute: 'slug'
             )
             ->tenantRoutePrefix('organization')
@@ -82,21 +83,21 @@ class AdminPanelProvider extends PanelProvider
             ]);
     }
 
-    public function navigationItems(): array
-    {
-        $user = auth()->user();
+    // public function navigationItems(): array
+    // {
+    //     $user = auth()->user();
 
-        if (!$user) {
-            return [];
-        }
+    //     if (!$user) {
+    //         return [];
+    //     }
 
-        return [
-            NavigationGroup::make()
-                ->label('Organizations')
-                ->items($user->organizations->map(function ($org) {
-                    return NavigationItem::make($org->name)
-                        ->url(route('organization.switch', ['id' => $org->id]));
-                })->toArray()),
-        ];
-    }
+    //     return [
+    //         NavigationGroup::make()
+    //             ->label('Organizations')
+    //             ->items($user->organizations->map(function ($org) {
+    //                 return NavigationItem::make($org->name)
+    //                     ->url(route('organization.switch', ['id' => $org->id]));
+    //             })->toArray()),
+    //     ];
+    // }
 }

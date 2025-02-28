@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Spatie\Permission\Models\Role as SpatieRole;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Role extends SpatieRole
 {
@@ -15,8 +16,8 @@ class Role extends SpatieRole
     /**
      * Relasi ke organisasi (tenant).
      */
-    public function tenant()
+    public function tenant(): BelongsTo
     {
         return $this->belongsTo(\App\Models\Organization::class, 'tenant_id');
     }
-}
+}   

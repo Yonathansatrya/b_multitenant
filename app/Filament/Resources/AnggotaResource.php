@@ -2,30 +2,28 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ProductResource\Pages;
-use App\Filament\Resources\ProductResource\RelationManagers;
-use App\Models\Product;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\User;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\AnggotaResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\AnggotaResource\RelationManagers;
 
-class ProductResource extends Resource
+class AnggotaResource extends Resource
 {
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
-    protected static ?string $model = Product::class;
-
+    protected static ?string $model = User::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nama_product')
-                ->required(),
+                //
             ]);
     }
 
@@ -33,7 +31,7 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nama_product')->searchable(),
+                //
             ])
             ->filters([
                 //
@@ -58,9 +56,9 @@ class ProductResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProducts::route('/'),
-            'create' => Pages\CreateProduct::route('/create'),
-            'edit' => Pages\EditProduct::route('/{record}/edit'),
+            'index' => Pages\ListAnggotas::route('/'),
+            'create' => Pages\CreateAnggota::route('/create'),
+            'edit' => Pages\EditAnggota::route('/{record}/edit'),
         ];
     }
 }
