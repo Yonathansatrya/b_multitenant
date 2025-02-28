@@ -45,8 +45,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                // Dashboard::class,
-                // UserResource::class,
+                Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
@@ -69,7 +68,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->tenant(
                 model: Organization::class,
-                ownershipRelationship: 'tenant',
+                ownershipRelationship: 'organization',
                 slugAttribute: 'slug'
             )
             ->tenantRoutePrefix('organization')
@@ -82,22 +81,4 @@ class AdminPanelProvider extends PanelProvider
                 FilamentShieldPlugin::make(),
             ]);
     }
-
-    // public function navigationItems(): array
-    // {
-    //     $user = auth()->user();
-
-    //     if (!$user) {
-    //         return [];
-    //     }
-
-    //     return [
-    //         NavigationGroup::make()
-    //             ->label('Organizations')
-    //             ->items($user->organizations->map(function ($org) {
-    //                 return NavigationItem::make($org->name)
-    //                     ->url(route('organization.switch', ['id' => $org->id]));
-    //             })->toArray()),
-    //     ];
-    // }
 }

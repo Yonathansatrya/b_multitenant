@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Organization;
 use Spatie\Permission\Models\Role as SpatieRole;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -10,14 +11,14 @@ class Role extends SpatieRole
     protected $fillable = [
         'name',
         'guard_name',
-        'tenant_id',
+        'organization_id',
     ];
 
     /**
-     * Relasi ke organisasi (tenant).
+     * Relasi ke organisasi (organization).
      */
-    public function tenant(): BelongsTo
+    public function organization(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Organization::class, 'tenant_id');
+        return $this->belongsTo(Organization::class, 'organization_id');
     }
-}   
+}

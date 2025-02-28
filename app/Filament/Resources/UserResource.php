@@ -14,16 +14,14 @@ use App\Filament\Resources\UserResource\Pages;
 
 class UserResource extends Resource
 {
-    protected static ?string $tenantOwnershipRelationshipName = 'tenant';
+    protected static ?string $tenantOwnershipRelationshipName = 'organization';
     protected static ?string $model = User::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getEloquentQuery(): Builder
     {
-        return User::query();
+        return parent::getEloquentQuery()->with('organization');
     }
-
     public static function canAccess(): bool
     {
         return auth()->user()->hasRole('super_admin', auth()->user()->currentTeam);

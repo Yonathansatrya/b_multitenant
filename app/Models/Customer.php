@@ -12,7 +12,7 @@ class Customer extends Model
 
     protected $fillable = ['name', 'organization_id'];
 
-    public function tenant(): BelongsTo
+    public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class, 'organization_id');
     }

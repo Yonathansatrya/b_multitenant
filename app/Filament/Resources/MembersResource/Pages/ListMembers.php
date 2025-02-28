@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\AnggotaResource\Pages;
+namespace App\Filament\Resources\MembersResource\Pages;
 
-use App\Filament\Resources\AnggotaResource;
+use App\Filament\Resources\MembersResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListAnggotas extends ListRecords
+class ListMembers extends ListRecords
 {
-    protected static string $resource = AnggotaResource::class;
+    protected static string $resource = MembersResource::class;
 
     protected function getHeaderActions(): array
     {

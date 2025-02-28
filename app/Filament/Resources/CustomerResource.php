@@ -17,16 +17,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CustomerResource extends Resource
 {
-    protected static ?string $tenantOwnershipRelationshipName = 'tenant';
+    protected static ?string $tenantOwnershipRelationshipName = 'organization';
     protected static ?string $model = Customer::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    // public static function canAccess(): bool
-    // {
-    //     return auth()->user()->hasRole('super_admin', auth()->user()->currentTeam);
-    // }
-
 
     public static function form(Form $form): Form
     {

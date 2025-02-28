@@ -14,7 +14,7 @@ class Product extends Model
         'organization_id'
     ];
 
-    public function tenant()
+    public function organization()
     {
         return $this->belongsTo(Organization::class, 'organization_id');
     }

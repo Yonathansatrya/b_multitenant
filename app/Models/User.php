@@ -52,7 +52,7 @@ class User extends Authenticatable implements HasTenants
     public function getRoleInCurrentOrganization(): ?string
     {
         return $this->organizations()
-                    ->where('organization_id', $this->current_organization_id)
+                    ->where('organizations.id', $this->current_organization_id)
                     ->first()?->pivot->role;
     }
 
@@ -71,6 +71,6 @@ class User extends Authenticatable implements HasTenants
      */
     public function getTenants(Panel $panel): Collection
     {
-        return $this->organizations()->get();
+        return $this->organizations()->get() ?? collect();
     }
 }

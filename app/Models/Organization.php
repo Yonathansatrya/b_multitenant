@@ -14,21 +14,11 @@ class Organization extends Model
     protected $fillable = ['name', 'slug'];
 
     /**
-     * Relasi ke tabel users (banyak ke banyak dengan role tambahan di pivot)
-     */
-    public function users(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class)
-                    ->withPivot('role')
-                    ->withTimestamps();
-    }
-
-    /**
      * Relasi ke roles dalam organisasi (multi-tenant roles)
      */
     public function roles(): HasMany
     {
-        return $this->hasMany(Role::class, 'tenant_id');
+        return $this->hasMany(Role::class, 'organization_id');
     }
 
     public function members(): BelongsToMany
@@ -36,5 +26,5 @@ class Organization extends Model
         return $this->belongsToMany(User::class, 'organization_user')
                     ->withPivot('role')
                     ->withTimestamps();
-    } 
+    }
 }
