@@ -1,0 +1,7 @@
+[33m328f82a[m[33m ([m[1;36mHEAD[m[33m)[m HEAD@{0}: rebase (continue): fixing bug and add MembersResource
+[33m42da354[m HEAD@{1}: rebase (start): checkout eb4a2d0e72e02c298e33a8db151a328df77a701e^
+[33m81c3d41[m[33m ([m[1;31morigin/master[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{2}: commit: Fixing bug create member is done
+[33mb182231[m HEAD@{3}: commit: clear bug Menus Members
+[33m7af72fe[m HEAD@{4}: commit: fixing bug and add MembersResource
+[33meb4a2d0[m HEAD@{5}: commit: fixed bug shield and add Anggota Manus
+[33m42da354[m HEAD@{6}: commit (initial): first commit

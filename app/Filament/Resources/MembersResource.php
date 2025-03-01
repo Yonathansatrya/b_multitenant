@@ -33,6 +33,8 @@ class MembersResource extends Resource
                     ->label('User')
                     ->options(User::query()->pluck('name', 'id')->toArray())
                     ->searchable()
+                    ->options(User::query()->pluck('name', 'id')->toArray())
+                    ->searchable()
                     ->required(),
                 Forms\Components\Select::make('status')
                     ->label('Status')
@@ -73,8 +75,10 @@ class MembersResource extends Resource
                     ->searchable(),
             ])
             ->filters([])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
