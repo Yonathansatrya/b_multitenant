@@ -76,9 +76,11 @@ class AdminPanelProvider extends PanelProvider
             ->tenantProfile(EditOrganizationProfile::class)
             ->tenantMiddleware([
                 SyncShieldTenant::class,
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class
             ], isPersistent: true)
             ->plugins([
                 FilamentShieldPlugin::make(),
+                \Hasnayeen\Themes\ThemesPlugin::make()
             ]);
     }
 }

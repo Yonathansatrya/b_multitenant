@@ -25,7 +25,7 @@ class ProductResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('nama_product')
-                ->required(),
+                    ->required(),
             ]);
     }
 
@@ -63,4 +63,20 @@ class ProductResource extends Resource
             'edit' => Pages\EditProduct::route('/{record}/edit'),
         ];
     }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        $user = auth()->user();
+    
+        if (!$user) {
+            \Log::info('No authenticated user.');
+            return false;
+        }
+    
+        // Log detected roles
+        \Log::info('User roles:', $user->getRoleNames()->toArray());
+    
+        return $user->hasAnyRole(['Product Manager', 'Super Admin']);
+    }
+    
 }

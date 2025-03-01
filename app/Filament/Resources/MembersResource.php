@@ -41,9 +41,9 @@ class MembersResource extends Resource
                         'inactive' => 'Inactive',
                     ])
                     ->required(),
-                Forms\Components\Select::make('role')
-                    ->relationship('roles', 'name')
-                    ->multiple()
+                    Forms\Components\Select::make('role_id')
+                    ->label('Role')
+                    ->relationship('role', 'name')
                     ->preload()
                     ->searchable()
                     ->required(),
@@ -67,7 +67,7 @@ class MembersResource extends Resource
                     ->label('Status')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('role')
+                    Tables\Columns\TextColumn::make('role.name')
                     ->label('Role')
                     ->sortable()
                     ->searchable(),
@@ -98,5 +98,9 @@ class MembersResource extends Resource
             'create' => Pages\CreateMembers::route('/create'),
             'edit' => Pages\EditMembers::route('/{record}/edit'),
         ];
+    }
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
     }
 }

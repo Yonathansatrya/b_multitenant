@@ -39,4 +39,9 @@ class RegisterOrganization extends RegisterTenant
 
         return $organization;
     }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin']) ?? false;
+    }
 }

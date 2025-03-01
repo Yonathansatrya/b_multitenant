@@ -22,4 +22,9 @@ class EditOrganizationProfile extends EditTenantProfile
 
             ]);
     }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin']) ?? false;
+    }
 }
