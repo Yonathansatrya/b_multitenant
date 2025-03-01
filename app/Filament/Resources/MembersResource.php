@@ -13,19 +13,17 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\MembersResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\MembersResource\RelationManagers;
+use App\Models\Organization;
+use App\Models\OrganizationUser;
+use Filament\Forms\Components\TextInput;
 
 class MembersResource extends Resource
 {
-    protected static ?string $tenantOwnershipRelationshipName = 'organization';
-    protected static ?string $model = User::class;
-    protected static ?string $label = 'Member Group';
+    protected static ?string $tenantRelationName = 'members';
+    protected static ?string $model = OrganizationUser::class;
+    protected static ?string $label = 'Member';
     protected static ?string $navigationGroup = "Organizations";
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()->with('organization');
-    }
 
     public static function form(Form $form): Form
     {
@@ -33,52 +31,51 @@ class MembersResource extends Resource
             ->schema([
                 Forms\Components\Select::make('user_id')
                     ->label('User')
-                    ->options(
-                        User::all()->mapWithKeys(function ($user) {
-                            return [$user->id => $user->name];
-                        })
-                    )
+                    ->options(User::query()->pluck('name', 'id')->toArray())
+                    ->searchable()
                     ->required(),
-                Forms\Components\Select::make('role')
-                    ->label('Role')
+                Forms\Components\Select::make('status')
+                    ->label('Status')
                     ->options([
-                        Role::all()->mapWithKeys(function ($role) {
-                            return [$role->name => $role->name];
-                        })
+                        'active' => 'Active',
+                        'inactive' => 'Inactive',
                     ])
                     ->required(),
-                Forms\Components\TextInput::make('email'),
-                // Forms\Components\TextInput::Select('status')
-                //     ->label('Status')
-                //     ->options([
-                //         'active' => 'Active',
-                //         'inactive' => 'Inactive',
-                //     ])
-                //     ->required(),
+                Forms\Components\Select::make('role')
+                    ->relationship('roles', 'name')
+                    ->multiple()
+                    ->preload()
+                    ->searchable()
+                    ->required(),
             ]);
     }
-
     public static function table(Table $table): Table
     {
         return $table
-            ->query(
-                User::query()->whereHas('organizations', function($q) {
-                    $q->where('organization_id', auth()->user()->current_organization_id);
-                })
-            )
             ->columns([
-                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('email')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('organizations.pivot.role')
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('User')
+                    ->sortable()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('organization.name')
+                    ->label('Organization')
+                    ->sortable()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('role')
                     ->label('Role')
                     ->sortable()
                     ->searchable(),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

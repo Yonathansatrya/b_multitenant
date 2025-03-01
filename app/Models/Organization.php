@@ -14,17 +14,28 @@ class Organization extends Model
     protected $fillable = ['name', 'slug'];
 
     /**
-     * Relasi ke roles dalam organisasi (multi-tenant roles)
+     * Relasi ke users melalui tabel pivot `organization_user`
+     */
+    public function members(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'organization_user')
+            ->withPivot('role', 'status')
+            ->withTimestamps();
+    }
+
+    /**
+     * Relasi ke `organization_user` langsung
+     */
+    public function organizationUsers(): HasMany
+    {
+        return $this->hasMany(OrganizationUser::class);
+    }
+
+    /**
+     * Relasi ke roles dalam organisasi
      */
     public function roles(): HasMany
     {
         return $this->hasMany(Role::class, 'organization_id');
-    }
-
-    public function members(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'organization_user')
-                    ->withPivot('role')
-                    ->withTimestamps();
     }
 }

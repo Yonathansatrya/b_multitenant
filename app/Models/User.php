@@ -2,18 +2,19 @@
 
 namespace App\Models;
 
-use BezhanSalleh\FilamentShield\Traits\HasPageShield;
-use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
-use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use App\Models\OrganizationUser;
 use Illuminate\Support\Collection;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\HasTenants;
+use Filament\Models\Contracts\FilamentUser;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasTenants
 {
@@ -34,6 +35,7 @@ class User extends Authenticatable implements HasTenants
     public function organizations(): BelongsToMany
     {
         return $this->belongsToMany(Organization::class)
+                    // ->using(OrganizationUser::class)
                     ->withPivot('role')
                     ->withTimestamps();
     }
