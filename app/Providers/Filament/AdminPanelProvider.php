@@ -80,7 +80,8 @@ class AdminPanelProvider extends PanelProvider
             ], isPersistent: true)
             ->plugins([
                 FilamentShieldPlugin::make(),
-                \Hasnayeen\Themes\ThemesPlugin::make()
+                \Hasnayeen\Themes\ThemesPlugin::make(),
+                \TomatoPHP\FilamentInvoices\FilamentInvoicesPlugin::make()
             ]);
     }
 }

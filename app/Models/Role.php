@@ -14,9 +14,6 @@ class Role extends SpatieRole
         'organization_id',
     ];
 
-    /**
-     * Relasi ke organisasi (organization).
-     */
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class, 'organization_id');

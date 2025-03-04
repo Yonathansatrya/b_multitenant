@@ -60,4 +60,9 @@ class User extends Authenticatable implements HasTenants
             $this->syncRoles([$role->name]);
         }
     }
+
+    public function loans()
+    {
+        return $this->hasMany(Loan::class);
+    }
 }

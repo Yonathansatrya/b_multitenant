@@ -19,7 +19,7 @@ use Filament\Forms\Components\TextInput;
 
 class MembersResource extends Resource
 {
-    protected static ?string $tenantRelationName = 'members';
+    protected static ?string $tenantRelationName = 'member';
     protected static ?string $model = OrganizationUser::class;
     protected static ?string $label = 'Member';
     protected static ?string $navigationGroup = "Organizations";

@@ -16,12 +16,10 @@ use Hash;
 
 class UserResource extends Resource
 {
+    protected static ?string $label = "user";
     protected static ?string $navigationGroup = 'Organizations';
-
     protected static ?string $model = User::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
     public static function form(Form $form): Form
     {
         return $form

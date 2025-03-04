@@ -2,18 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class TypeItem extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'nama_product',
-        'organization_id'
+        'name',
+        'description',
+        'organization_id',
     ];
 
+    public function items()
+    {
+        return $this->hasMany(Items::class, 'item_type_id');
+    }
     public function organization()
     {
         return $this->belongsTo(Organization::class, 'organization_id');

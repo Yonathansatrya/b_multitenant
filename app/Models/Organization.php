@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Organization extends Model
 {
@@ -28,5 +28,20 @@ class Organization extends Model
     public function roles(): HasMany
     {
         return $this->hasMany(Role::class, 'organization_id');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(Items::class);
+    }
+
+    public function typeItems()
+    {
+        return $this->hasMany(TypeItem::class);
+    }
+
+    public function loans()
+    {
+        return $this->hasMany(Loan::class);
     }
 }
