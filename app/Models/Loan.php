@@ -38,4 +38,9 @@ class Loan extends Model
     {
         return $this->belongsToMany(Items::class, 'loan_items')->withPivot('quantity');
     }
+    public function organizationLoan()
+    {
+        return $this->belongsTo(Organization::class, 'organization_loan');
+    }
+
 }

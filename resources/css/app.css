@@ -1,4 +1,5 @@
+@import '../../vendor/awcodes/filament-table-repeater/resources/css/plugin.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import '<path-to-vendor>/awcodes/filament-table-repeater/resources/css/plugin.css';
+
