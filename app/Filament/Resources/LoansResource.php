@@ -100,11 +100,13 @@ class LoansResource extends Resource
                 Tables\Columns\TextColumn::make('organizationLoan.name')
                     ->label('Organization')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('loanItems.quantity')
+                    ->label('Jumlah'),
                 Tables\Columns\TextColumn::make('loan_date')
                     ->label('tanggal pinjam')
                     ->date(),
                 Tables\Columns\TextColumn::make('loan_end_date')
-                    ->label('tanggal selesai')
+                    ->label('tanggal kembali')
                     ->date(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
@@ -141,5 +143,17 @@ class LoansResource extends Resource
             'create' => Pages\CreateLoans::route('/create'),
             'edit' => Pages\EditLoans::route('/{record}/edit'),
         ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            //   Widgets\CalenderLoansWidget::class,
+        ];
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
     }
 }

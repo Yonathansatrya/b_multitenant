@@ -43,7 +43,7 @@ class MembersResource extends Resource
                         'inactive' => 'Inactive',
                     ])
                     ->required(),
-                    Forms\Components\Select::make('role_id')
+                Forms\Components\Select::make('role_id')
                     ->label('Role')
                     ->relationship('role', 'name')
                     ->preload()
@@ -69,13 +69,14 @@ class MembersResource extends Resource
                     ->label('Status')
                     ->sortable()
                     ->searchable(),
-                    Tables\Columns\TextColumn::make('role.name')
+                Tables\Columns\TextColumn::make('role.name')
                     ->label('Role')
                     ->sortable()
                     ->searchable(),
             ])
-            ->filters([])
-            ->filters([])
+            ->filters([
+                
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

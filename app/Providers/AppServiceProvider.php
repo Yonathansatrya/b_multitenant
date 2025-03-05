@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Loan;
+use App\Models\LoanItem;
+use App\Observers\LoanItemObserver;
+use App\Observers\LoanObserver;
 use Illuminate\Support\ServiceProvider;
 use TomatoPHP\FilamentInvoices\Facades\FilamentInvoices;
 use TomatoPHP\FilamentInvoices\Services\Contracts\InvoiceFor;
@@ -22,13 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        FilamentInvoices::registerFor([
-            InvoiceFor::make(Account::class)
-                ->label('Account')
-        ]);
-        FilamentInvoices::registerFrom([
-            InvoiceFrom::make(Company::class)
-                ->label('Company')
-        ]);
+        Loan::observe(LoanObserver::class);
+        LoanItem::observe(LoanItemObserver::class);
     }
 }
