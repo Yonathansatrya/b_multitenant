@@ -44,4 +44,9 @@ class Organization extends Model
     {
         return $this->hasMany(Loan::class);
     }
+
+    public function organization_loan()
+    {
+        return $this->hasOne(Loan::class, 'organization_loan');
+    }
 }
