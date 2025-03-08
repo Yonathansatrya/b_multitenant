@@ -21,8 +21,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('organization_user', function (Blueprint $table) {
-            $table->dropColumn('status')->after('role');
-        });
+        //
     }
 };

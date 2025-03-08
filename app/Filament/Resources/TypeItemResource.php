@@ -74,4 +74,9 @@ class TypeItemResource extends Resource
             'edit' => Pages\EditTypeItem::route('/{record}/edit'),
         ];
     }
+    
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
+    }
 }
