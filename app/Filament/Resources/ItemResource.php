@@ -16,6 +16,7 @@ use App\Filament\Resources\ItemResource\RelationManagers;
 
 class ItemResource extends Resource
 {
+    protected static ?string $navigationGroup = 'Barang';
     protected static ?string $label = 'Barang';
     protected static ?string $model = Items::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -88,4 +89,9 @@ class ItemResource extends Resource
             'edit' => Pages\EditItem::route('/{record}/edit'),
         ];
     }
+
+    // public static function shouldRegisterNavigation(): bool
+    // {
+    //     return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
+    // }
 }

@@ -16,6 +16,7 @@ use Hash;
 
 class UserResource extends Resource
 {
+    protected static ?string $tenantOwnershipRelationshipName = 'organizations';
     protected static ?string $label = "user";
     protected static ?string $navigationGroup = 'Organizations';
     protected static ?string $model = User::class;
@@ -29,10 +30,10 @@ class UserResource extends Resource
                     ->required(),
                 Forms\Components\TextInput::make('email')
                     ->label('Email')
+                    ->password()
                     ->required(),
                 Forms\Components\TextInput::make('password')
-                    ->label('Password')
-                    ->password()
+                    ->label('password')
                     ->required()
                     ->dehydrateStateUsing(fn($state) => \Hash::make($state)),
             ]);
@@ -44,16 +45,13 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email')
-                    ->searchable()
-                    ->sortable(),
-                // Tables\Columns\TextColumn::make('organization.name')
-                //     ->label('Organization')
-                //     ->searchable()
-                //     ->sortable(),
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('password')
+                    ->label('password')
+                    ->searchable(),
             ])
             ->filters([
                 //
@@ -85,8 +83,8 @@ class UserResource extends Resource
         ];
     }
 
-    public static function shouldRegisterNavigation(): bool
-    {
-        return auth()->user()?->hasAnyRole(['Super Admin']) ?? false;
-    }
+    // public static function shouldRegisterNavigation(): bool
+    // {
+    //     return auth()->user()?->hasAnyRole(['Super Admin']) ?? false;
+    // }
 }

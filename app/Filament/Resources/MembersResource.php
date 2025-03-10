@@ -75,7 +75,7 @@ class MembersResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -104,8 +104,8 @@ class MembersResource extends Resource
             'edit' => Pages\EditMembers::route('/{record}/edit'),
         ];
     }
-    public static function shouldRegisterNavigation(): bool
-    {
-        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
-    }
+    // public static function shouldRegisterNavigation(): bool
+    // {
+    //     return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
+    // }
 }

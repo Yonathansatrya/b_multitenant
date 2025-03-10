@@ -81,7 +81,6 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentShieldPlugin::make(),
                 \Hasnayeen\Themes\ThemesPlugin::make(),
-                \TomatoPHP\FilamentInvoices\FilamentInvoicesPlugin::make()
             ]);
     }
 }

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TypeItemResource extends Resource
 {
+    protected static ?string $navigationGroup = 'Barang';
     protected static ?string $label = 'Tipe Barang';
     protected static ?string $model = TypeItem::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -23,7 +24,7 @@ class TypeItemResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                t::make('name')
                     ->label('Nama Tipe Barang')
                     ->required(),
                 Forms\Components\TextInput::make('description')
@@ -74,9 +75,9 @@ class TypeItemResource extends Resource
             'edit' => Pages\EditTypeItem::route('/{record}/edit'),
         ];
     }
-    
-    public static function shouldRegisterNavigation(): bool
-    {
-        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
-    }
+
+    // public static function shouldRegisterNavigation(): bool
+    // {
+    //     return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
+    // }
 }

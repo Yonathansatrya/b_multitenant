@@ -49,4 +49,14 @@ class Organization extends Model
     {
         return $this->hasOne(Loan::class, 'organization_loan');
     }
+
+    public function rooms()
+    {
+        return $this->hasMany(Room::class);
+    }
+
+    public function roomLoans()
+    {
+        return $this->hasMany(RoomLoans::class);
+    }
 }
