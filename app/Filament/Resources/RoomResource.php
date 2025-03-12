@@ -17,6 +17,7 @@ use Filament\Tables\Filters\SelectFilter;
 
 class RoomResource extends Resource
 {
+    protected static ?string $label = 'Ruangan';
     protected static ?string $tenantOwnershipRelationshipName = 'organization';
     protected static ?string $model = Room::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';

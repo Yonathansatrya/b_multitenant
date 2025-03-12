@@ -5,14 +5,16 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use App\Models\Room;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Forms\Form;
 use App\Models\RoomLoans;
 use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Actions;
 use Filament\Facades\Filament;
+use Filament\Resources\Resource;
 use Awcodes\TableRepeater\Header;
 use Filament\Forms\Components\Grid;
+use Filament\Support\Enums\Alignment;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\RoomLoansResource\Pages;
@@ -22,6 +24,7 @@ use App\Filament\Resources\RoomLoansResource\RelationManagers;
 
 class RoomLoansResource extends Resource
 {
+    protected static ?string $label = 'Peminjaman Ruangan';
     protected static ?string $tenantOwnershipRelationshipName = 'organization';
     protected static ?string $model = RoomLoans::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -64,8 +67,8 @@ class RoomLoansResource extends Resource
                     ->label('Room List')
                     ->relationship('roomLoanDetails')
                     ->headers([
-                        Header::make('room_id')->label('Pilih Ruangan'),
-                        Header::make('note')->label('Note'),
+                        Header::make('room_id')->label('Pilih Ruangan')->align(Alignment::Center),
+                        // Header::make('note')->label('Note')->align(Alignment::Center),
                     ])
                     ->schema([
                         Grid::make(2)
@@ -124,19 +127,35 @@ class RoomLoansResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make('Approve')
-                    ->visible(fn() => auth()->user()->hasRole('Super Admin'))
-                    ->action(fn(RoomLoans $record) => $record->update(['loan_status' => 'Approve']))
-                    ->requiresConfirmation()
-                    ->color('success')
-                    ->icon('heroicon-o-check-circle'),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('Finish')
+                        ->visible(fn() => auth()->user()->hasRole('Super Admin'))
+                        ->action(fn(RoomLoans $record) => $record->update(['loan_status' => 'Finish']))
+                        ->requiresConfirmation()
+                        ->color('gray')
+                        ->icon('heroicon-o-clipboard'),
+                    Tables\Actions\Action::make('Approve')
+                        ->visible(fn() => auth()->user()->hasRole('Super Admin'))
+                        ->action(fn(RoomLoans $record) => $record->update(['loan_status' => 'Approve']))
+                        ->requiresConfirmation()
+                        ->color('success')
+                        ->icon('heroicon-o-check-circle'),
+                    Tables\Actions\Action::make('Reject')
+                        ->visible(fn() => auth()->user()->hasRole('Super Admin'))
+                        ->action(fn(RoomLoans $record) => $record->update(['loan_status' => 'Reject']))
+                        ->requiresConfirmation()
+                        ->color('danger')
+                        ->icon('heroicon-o-x-circle'),
+                ])->iconButton()
+                    ->label('Actions')
+                    ->visible(fn() => auth()->user()->hasRole('Super Admin')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\BulkAction::make('Approve Selected')
+                    Tables\Actions\BulkAction::make('Approve')
                         ->visible(fn() => auth()->user()->hasRole('Super Admin'))
                         ->requiresConfirmation()
                         ->color('success')
@@ -144,6 +163,13 @@ class RoomLoansResource extends Resource
                         ->action(fn(array $records) => RoomLoans::whereIn('id', $records)->update(['loan_status' => 'Approve']))
                         ->deselectRecordsAfterCompletion()
                         ->successNotificationTitle('Selected loans have been approved!'),
+                    Tables\Actions\Bulkaction::make('Reject')
+                        ->visible(fn() => auth()->user()->hasRole('Super Admin'))
+                        ->requiresConfirmation()
+                        ->color('danger')
+                        ->icon('heroicon-o-x-circle')
+                        ->action(fn(array $record) => RoomLoans::whereIn('id', $record)->update(['loan_status' => 'Reject']))
+                        ->successNotificationTitle('Permintaan di tolak!'),
                 ]),
             ]);
     }
