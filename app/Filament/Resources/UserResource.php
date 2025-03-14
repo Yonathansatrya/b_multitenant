@@ -17,7 +17,7 @@ use Hash;
 class UserResource extends Resource
 {
     protected static ?string $tenantOwnershipRelationshipName = 'organizations';
-    protected static ?string $label = "user";
+    protected static ?string $navigationLabel = 'User';
     protected static ?string $navigationGroup = 'Organizations';
     protected static ?string $model = User::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -30,10 +30,10 @@ class UserResource extends Resource
                     ->required(),
                 Forms\Components\TextInput::make('email')
                     ->label('Email')
-                    ->password()
                     ->required(),
                 Forms\Components\TextInput::make('password')
                     ->label('password')
+                    ->password()
                     ->required()
                     ->dehydrateStateUsing(fn($state) => \Hash::make($state)),
             ]);
@@ -51,6 +51,7 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('password')
                     ->label('password')
+                    ->limit(30)
                     ->searchable(),
             ])
             ->filters([

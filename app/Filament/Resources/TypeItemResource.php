@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class TypeItemResource extends Resource
 {
     protected static ?string $navigationGroup = 'Barang';
-    protected static ?string $label = 'Tipe Barang';
+    protected static ?string $navigationLabel = 'Tipe Barang';
     protected static ?string $model = TypeItem::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 

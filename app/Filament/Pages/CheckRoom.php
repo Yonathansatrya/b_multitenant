@@ -6,6 +6,7 @@ use Filament\Forms\Form;
 use Filament\Pages\Page;
 use App\Models\Room;
 use Filament\Tables;
+use Filament\Forms\Components\Grid;
 use Filament\Tables\Table;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Columns\TextColumn;
@@ -98,14 +99,17 @@ class CheckRoom extends Page implements HasTable
     public function form(Form $form): Form
     {
         return $form->schema([
-            DatePicker::make('startDate')
-                ->label('Tanggal Mulai')
-                ->required()
-                ->live(),
-            DatePicker::make('endDate')
-                ->label('Tanggal Selesai')
-                ->required()
-                ->live(),
+            Grid::make(2)->schema([
+                DatePicker::make('startDate')
+                    ->label('Tanggal Mulai')
+                    ->required()
+                    ->live(),
+                DatePicker::make('endDate')
+                    ->label('Tanggal Selesai')
+                    ->required()
+                    ->live(),
+            ]),
         ]);
     }
+
 }

@@ -17,7 +17,7 @@ use Filament\Tables\Filters\SelectFilter;
 
 class RoomResource extends Resource
 {
-    protected static ?string $label = 'Ruangan';
+    protected static ?string $navigationLabel = 'Ruangan';
     protected static ?string $tenantOwnershipRelationshipName = 'organization';
     protected static ?string $model = Room::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -27,21 +27,30 @@ class RoomResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('room_code')
-                    ->label('Code Room')
-                    ->default(fn() => 'R-' . strtoupper(uniqid()))
+                    ->default(
+                        fn() => 'R-' . str_pad(
+                            (Room::where('room_code', 'REGEXP', '^R-[0-9]+$')
+                                ->selectRaw("MAX(CAST(SUBSTRING_INDEX(room_code, '-', -1) AS UNSIGNED)) as max_code")
+                                ->value('max_code') ?? 0) + 1,
+                            3,
+                            '0',
+                            STR_PAD_LEFT
+                        )
+                    )
+                    ->label('Kode Ruangan')
                     ->required()
                     ->disabled(fn($livewire) => $livewire instanceof Pages\EditRoom),
                 Forms\Components\TextInput::make('room_name')
                     ->label('Nama Ruangan')
                     ->required(),
                 Forms\Components\TextInput::make('room_description')
-                    ->label('deskripsi')
+                    ->label('deskripsi Ruangan')
                     ->nullable(),
                 Forms\Components\Select::make('status')
                     ->label('Status Ruangan')
                     ->options([
-                        'Active' => 'Active',
-                        'Inactive' => 'Inactive',
+                        'Active' => 'Aktif',
+                        'Inactive' => 'Tidak Aktif',
                     ])
                     ->default('Active')
                     ->required(),
@@ -53,7 +62,7 @@ class RoomResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('room_code')
-                    ->label(' Room Code')
+                    ->label(' Kode Ruangan')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('room_name')
                     ->label('Nama Ruangan')
@@ -61,7 +70,7 @@ class RoomResource extends Resource
                 Tables\Columns\TextColumn::make('room_description')
                     ->label('Deskripsi Ruangan')
                     ->searchable()
-                    ->limit(50),
+                    ->limit(30),
                 Tables\Columns\TextColumn::make('status')
                     ->label('status')
                     ->badge()

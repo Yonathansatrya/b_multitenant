@@ -27,7 +27,7 @@ use App\Filament\Resources\LoansResource\Widgets\CalenderLoansWidget;
 class LoansResource extends Resource
 {
     protected static ?string $navigationGroup = 'Barang';
-    protected static ?string $label = 'Peminjaman';
+    protected static ?string $navigationLabel = 'Peminjaman Barang';
     protected static ?string $model = Loan::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
