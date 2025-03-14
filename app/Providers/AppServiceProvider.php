@@ -7,9 +7,8 @@ use App\Models\LoanItem;
 use App\Observers\LoanItemObserver;
 use App\Observers\LoanObserver;
 use Illuminate\Support\ServiceProvider;
-use TomatoPHP\FilamentInvoices\Facades\FilamentInvoices;
-use TomatoPHP\FilamentInvoices\Services\Contracts\InvoiceFor;
-use TomatoPHP\FilamentInvoices\Services\Contracts\InvoiceFrom;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +25,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (Auth::check() && !Auth::user()->organization_id) {
+            Route::get('/admin', function () {
+                return redirect()->route('filament.admin.pages.no-organization');
+            });
+        }
+
         Loan::observe(LoanObserver::class);
         LoanItem::observe(LoanItemObserver::class);
     }
