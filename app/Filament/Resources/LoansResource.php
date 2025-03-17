@@ -151,8 +151,8 @@ class LoansResource extends Resource
         ];
     }
 
-//     public static function shouldRegisterNavigation(): bool
-//     {
-//         return auth()->user()?->hasAnyRole(['Super Admin', 'Customer Manager']) ?? false;
-//     }
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin', 'Customer Manager']) ?? false;
+    }
 }

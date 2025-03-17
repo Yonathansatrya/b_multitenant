@@ -90,8 +90,8 @@ class ItemResource extends Resource
         ];
     }
 
-    // public static function shouldRegisterNavigation(): bool
-    // {
-    //     return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
-    // }
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
+    }
 }

@@ -203,4 +203,9 @@ class RoomLoansResource extends Resource
             'edit' => Pages\EditRoomLoans::route('/{record}/edit'),
         ];
     }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
+    }
 }

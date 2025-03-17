@@ -84,8 +84,8 @@ class UserResource extends Resource
         ];
     }
 
-    // public static function shouldRegisterNavigation(): bool
-    // {
-    //     return auth()->user()?->hasAnyRole(['Super Admin']) ?? false;
-    // }
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin']) ?? false;
+    }
 }

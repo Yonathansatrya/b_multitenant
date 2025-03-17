@@ -20,6 +20,11 @@ class Organization extends Model
             ->withTimestamps();
     }
 
+    public function invites()
+    {
+        return $this->hasMany(Invite::class);
+    }
+
     public function organizationUsers(): HasMany
     {
         return $this->hasMany(OrganizationUser::class);
