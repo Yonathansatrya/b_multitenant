@@ -25,12 +25,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (Auth::check() && !Auth::user()->organization_id) {
-            Route::get('/admin', function () {
-                return redirect()->route('filament.admin.pages.no-organization');
-            });
-        }
-
         Loan::observe(LoanObserver::class);
         LoanItem::observe(LoanItemObserver::class);
     }

@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class EnsureOrganization
 {
@@ -14,7 +15,7 @@ class EnsureOrganization
         $user = Auth::user();
 
         if ($user && !$user->organizations()->exists()) {
-            return redirect('/admin/no-organization');
+            return redirect()->route('no-organization');
         }
 
         return $next($request);

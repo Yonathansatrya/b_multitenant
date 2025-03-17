@@ -1,14 +1,17 @@
 <?php
 
-use App\Filament\Pages\CheckRoom;
 use Illuminate\Support\Facades\Route;
-use App\Filament\Pages\NoOrganization;
-use App\Http\Controllers\OrganizationController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/admin/no-organization', NoOrganization::class)->name('filament.admin.no-organization');
+Route::get('/no-organization', function () {
+    return view('no-organization');
+})->name('no-organization');
 
-Route::get('/organization/switch/{id}', [OrganizationController::class, 'switch'])->name('organization.switch');
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect('/admin/login');
+})->name('logout');

@@ -18,8 +18,8 @@ class CheckRoom extends Page implements HasTable
     use Tables\Concerns\InteractsWithTable;
 
     protected static ?string $navigationLabel = 'Ketersediaan Ruangan';
-    protected static ?string $slug = 'check-room-availability';
     protected static ?string $title = 'Ketersediaan Ruangan';
+    protected static ?string $slug = 'check-room-availability';
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
     protected static string $view = 'filament.pages.check-room';
 
@@ -34,33 +34,13 @@ class CheckRoom extends Page implements HasTable
         ]);
     }
 
-    // Status hanya dari yang Aprrove
-    // protected function getTableQuery()
-    // {
-    //     return Room::query()
-    //         ->select('rooms.*')
-    //         ->selectRaw("
-    //             CASE
-    //                 WHEN EXISTS (
-    //                     SELECT 1 FROM room_loan_details rld
-    //                     JOIN room_loans rl ON rld.room_loan_id = rl.id
-    //                     WHERE rld.room_id = rooms.id
-    //                     AND rl.loan_status = 'Approve'
-    //                     AND (
-    //                         (rl.start_date BETWEEN ? AND ?)
-    //                         OR (rl.end_date BETWEEN ? AND ?)
-    //                     )
-    //                 )
-    //                 THEN 'Tidak Tersedia'
-    //                 ELSE 'Tersedia'
-    //             END AS status
-    //         ", [$this->startDate, $this->endDate, $this->startDate, $this->endDate]);
-    // }
-
-    // Modifikasi di ambil dari Approve dan Status pada rooms Inactive
     protected function getTableQuery()
     {
+        $user = auth()->user();
+        $organizationId = $user->organizations()->first()->id ?? null;
+
         return Room::query()
+            ->where('organization_id', $organizationId)
             ->select('rooms.*')
             ->selectRaw("
             CASE

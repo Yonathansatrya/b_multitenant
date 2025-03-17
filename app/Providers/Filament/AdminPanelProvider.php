@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use register;
 use Filament\Pages;
 use Filament\Panel;
 use App\Models\User;
@@ -9,6 +10,7 @@ use Filament\Widgets;
 use Filament\PanelProvider;
 use App\Models\Organization;
 use Filament\Pages\Dashboard;
+use App\Filament\Pages\CheckRoom;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Auth;
 use App\Filament\Pages\NoOrganization;
@@ -38,14 +40,14 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->registration()
             ->colors([
-                'primary' => Color::Amber, 
+                'primary' => Color::Amber,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Dashboard::class,
-                NoOrganization::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
@@ -77,7 +79,7 @@ class AdminPanelProvider extends PanelProvider
             ->tenantProfile(EditOrganizationProfile::class)
             ->tenantMiddleware([
                 SyncShieldTenant::class,
-                \Hasnayeen\Themes\Http\Middleware\SetTheme::class
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class,
             ], isPersistent: true)
             ->plugins([
                 FilamentShieldPlugin::make(),
