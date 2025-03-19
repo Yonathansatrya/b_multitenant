@@ -18,6 +18,7 @@ class CheckRoom extends Page implements HasTable
     use Tables\Concerns\InteractsWithTable;
 
     protected static ?string $navigationLabel = 'Ketersediaan Ruangan';
+    protected static ?string $navigationGroup = 'Ruangan';
     protected static ?string $title = 'Ketersediaan Ruangan';
     protected static ?string $slug = 'check-room-availability';
     protected static ?string $navigationIcon = 'heroicon-o-calendar';

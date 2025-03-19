@@ -1,39 +1,41 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\SuperAdmin\Resources;
 
 use Filament\Forms;
 use App\Models\Room;
 use Filament\Tables;
-use Filament\Actions;
 use Filament\Forms\Form;
 use App\Models\RoomLoans;
 use Filament\Tables\Table;
-use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Awcodes\TableRepeater\Header;
 use Filament\Forms\Components\Grid;
 use Filament\Support\Enums\Alignment;
-use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\RoomLoansResource\Pages;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\RoomLoansResource\RelationManagers;
+use App\Filament\SuperAdmin\Resources\RoomBookingResource\Pages;
+use App\Filament\SuperAdmin\Resources\RoomBookingResource\RelationManagers;
+use App\Models\Organization;
 
-class RoomLoansResource extends Resource
+class RoomBookingResource extends Resource
 {
-    protected static ?string $navigationLabel = 'Peminjaman Ruangan';
+    protected static ?string $navigationLabel = 'Booking Ruangan';
     protected static ?string $navigationGroup = 'Ruangan';
-    protected static ?string $tenantOwnershipRelationshipName = 'organization';
     protected static ?string $model = RoomLoans::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('organization_id')
+                    ->label('Peminjaman Milik Organisasi')
+                    ->options(Organization::all()->pluck('name', 'id'))
+                    ->required(),
                 Forms\Components\TextInput::make('loan_code')
                     ->label('Kode Peminjaman')
                     ->required()
@@ -55,8 +57,9 @@ class RoomLoansResource extends Resource
                 Forms\Components\DatePicker::make('start_date')
                     ->label('Tanggal Mulai')
                     ->required(),
-                Forms\Components\Select::make('loan_status')
+                Forms\Components\Radio::make('loan_status')
                     ->label('Status')
+                    ->inline()
                     ->options([
                         'Pending' => 'Pending',
                         'Reject' => 'Reject',
@@ -68,7 +71,6 @@ class RoomLoansResource extends Resource
                 Forms\Components\DatePicker::make('end_date')
                     ->label('Tanggal Selesai')
                     ->required(),
-
                 TableRepeater::make('roomLoanDetails')
                     ->label('Daftar Ruangan')
                     ->relationship('roomLoanDetails')
@@ -178,41 +180,23 @@ class RoomLoansResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\BulkAction::make('Approve')
-                        ->visible(fn() => auth()->user()->hasRole('Super Admin'))
-                        ->requiresConfirmation()
-                        ->color('success')
-                        ->icon('heroicon-o-check-circle')
-                        ->action(fn(array $records) => RoomLoans::whereIn('id', $records)->update(['loan_status' => 'Approve']))
-                        ->deselectRecordsAfterCompletion()
-                        ->successNotificationTitle('Selected loans have been approved!'),
-                    Tables\Actions\Bulkaction::make('Reject')
-                        ->visible(fn() => auth()->user()->hasRole('Super Admin'))
-                        ->requiresConfirmation()
-                        ->color('danger')
-                        ->icon('heroicon-o-x-circle')
-                        ->action(fn(array $record) => RoomLoans::whereIn('id', $record)->update(['loan_status' => 'Reject']))
-                        ->successNotificationTitle('Permintaan di tolak!'),
                 ]),
             ]);
     }
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            //
+        ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListRoomLoans::route('/'),
-            'create' => Pages\CreateRoomLoans::route('/create'),
-            'edit' => Pages\EditRoomLoans::route('/{record}/edit'),
+            'index' => Pages\ListRoomBookings::route('/'),
+            'create' => Pages\CreateRoomBooking::route('/create'),
+            'edit' => Pages\EditRoomBooking::route('/{record}/edit'),
         ];
-    }
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
     }
 }

@@ -25,12 +25,10 @@ class RoomWidget extends CalendarWidget
     public function updateCalendarView($state)
     {
         $this->calendarView = $state;
-
         session(['calendarView' => $state]);
         session()->save();
 
-        $this->dispatch('changeCalendarView', $state);
-        $this->dispatch('$refresh');
+        $this->refreshRecords();
     }
 
     public function getEvents(array $fetchInfo = []): Collection|array

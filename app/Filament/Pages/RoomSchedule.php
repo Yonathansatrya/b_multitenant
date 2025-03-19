@@ -9,6 +9,7 @@ use App\Filament\Resources\RoomLoansResource\Widgets\RoomWidget;
 class RoomSchedule extends Page
 {
     protected static ?string $navigationLabel = 'Jadwal Ruangan';
+    protected static ?string $navigationGroup = 'Ruangan';
     protected static ?string $slug = 'room-schedule';
     protected static ?string $title = 'Jadwal Ruangan';
     protected static ?string $navigationIcon = 'heroicon-o-calendar';

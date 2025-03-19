@@ -12,6 +12,7 @@ class Invite extends Model
 
     protected $fillable = [
         'organization_id',
+        'email',
         'invite_code',
         'expires_at'
     ];

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\SuperAdmin\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\SuperAdmin\Resources\UserResource\Pages;
+use App\Filament\SuperAdmin\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,30 +12,28 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Hash;
 
 class UserResource extends Resource
 {
-    protected static ?string $tenantOwnershipRelationshipName = 'organizations';
-    protected static ?string $navigationLabel = 'User';
-    protected static ?string $navigationGroup = 'Organizations';
     protected static ?string $model = User::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Name')
+                    ->label('Username')
                     ->required(),
                 Forms\Components\TextInput::make('email')
                     ->label('Email')
                     ->required(),
                 Forms\Components\TextInput::make('password')
-                    ->label('password')
+                    ->label('Password')
                     ->password()
                     ->required()
-                    ->dehydrateStateUsing(fn($state) => \Hash::make($state)),
+                    ->dehydrateStateUsing(fn ($state) => bcrypt($state)),
             ]);
     }
 
@@ -44,15 +42,15 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Name')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Username'),
                 Tables\Columns\TextColumn::make('email')
-                    ->label('Email')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Email'),
                 Tables\Columns\TextColumn::make('password')
-                    ->label('password')
-                    ->limit(30)
-                    ->searchable(),
+                    ->label('Password')
+                    ->getStateUsing(fn ($record) => $record->password)
+                    ->limit(20),
             ])
             ->filters([
                 //
@@ -82,10 +80,5 @@ class UserResource extends Resource
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
-    }
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return auth()->user()?->hasAnyRole(['Super Admin']) ?? false;
     }
 }

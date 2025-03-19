@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\SuperAdmin\Resources;
 
 use Filament\Forms;
 use App\Models\Room;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Filament\Actions;
 use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\RoomResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\RoomResource\RelationManagers;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\SuperAdmin\Resources\RoomResource\Pages;
+use App\Filament\SuperAdmin\Resources\RoomResource\RelationManagers;
+use App\Models\Organization;
 
 class RoomResource extends Resource
 {
     protected static ?string $navigationLabel = 'Ruangan';
     protected static ?string $navigationGroup = 'Ruangan';
-    protected static ?string $tenantOwnershipRelationshipName = 'organization';
     protected static ?string $model = Room::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -41,6 +41,11 @@ class RoomResource extends Resource
                     ->label('Kode Ruangan')
                     ->required()
                     ->disabled(fn($livewire) => $livewire instanceof Pages\EditRoom),
+                Forms\Components\Select::make('organization_id')
+                    ->label('Milik Organisasi')
+                    ->options(Organization::all()->pluck('name' , 'id'))
+                    ->searchable()
+                    ->required(),
                 Forms\Components\TextInput::make('room_name')
                     ->label('Nama Ruangan')
                     ->required(),
@@ -68,10 +73,13 @@ class RoomResource extends Resource
                 Tables\Columns\TextColumn::make('room_name')
                     ->label('Nama Ruangan')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('organization.name')
+                    ->label('Milik Organisasi')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('room_description')
                     ->label('Deskripsi Ruangan')
                     ->searchable()
-                    ->limit(30),
+                    ->limit(20),
                 Tables\Columns\TextColumn::make('status')
                     ->label('status')
                     ->badge()
@@ -89,8 +97,8 @@ class RoomResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\DeleteAction::make(),
-
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -113,10 +121,5 @@ class RoomResource extends Resource
             'create' => Pages\CreateRoom::route('/create'),
             'edit' => Pages\EditRoom::route('/{record}/edit'),
         ];
-    }
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
     }
 }
