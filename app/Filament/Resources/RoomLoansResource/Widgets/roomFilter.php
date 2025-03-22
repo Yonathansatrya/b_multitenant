@@ -3,15 +3,20 @@
 namespace App\Filament\Resources\RoomLoansResource\Widgets;
 
 use Filament\Widgets\Widget;
-use Livewire\Component;
+
 class RoomFilter extends Widget
 {
     protected static string $view = 'filament.resources.room-loans-resource.widgets.room-filter';
+    public string $calendarView;
 
-    public ?string $calendarView = 'dayGridMonth';
+    public function mount()
+    {
+        $this->calendarView = session('calendarView', 'dayGridMonth');
+    }
 
     public function applyFilter()
     {
-        $this->dispatch('updatedCalendarView', $this->calendarView);
+        session(['calendarView' => $this->calendarView]);
+        $this->dispatch('ChangeCalendarView', $this->calendarView);
     }
 }
