@@ -5,6 +5,7 @@ namespace App\Filament\SuperAdmin\Resources;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Invite;
+use Filament\Support\Enums\ActionSize;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -62,13 +63,6 @@ class MemberInviteResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('users.name')
-                    ->label('Kirim ke User')
-                    ->searchable()
-                    ->formatStateUsing(fn($record) => $record->users->pluck('name')->join(', ')),
-                Tables\Columns\TextColumn::make('email')
-                    ->label('Email')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('Organization.name')
                     ->label('Undangan Organisasi'),
                 Tables\Columns\TextColumn::make('invite_code')
@@ -82,14 +76,41 @@ class MemberInviteResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('generateInvite')
                     ->label('Send')
                     ->requiresConfirmation()
                     ->action(fn($record) => self::generateInvite($record))
                     ->icon('heroicon-o-paper-airplane')
                     ->color('success'),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('copyLink')
+                    ->label('Link')
+                    ->icon('heroicon-o-link')
+                    ->color('blue')
+                    ->action(function ($record) {
+                        $inviteLink = url("/invite/{$record->invite_code}");
+                        return \Filament\Notifications\Notification::make()
+                            ->title('Link disalin!')
+                            ->body("Tautan undangan: $inviteLink")
+                            ->success()
+                            ->send();
+                    })
+                    ->extraAttributes(function ($record) {
+                        return [
+                            'onclick' => "navigator.clipboard.writeText('" . url("/invite/{$record->invite_code}") . "')",
+                            'data-invite-code' => $record->invite_code,
+                        ];
+                    })
+                    ->hidden(fn($record) => !$record->invite_code),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ])
+                    ->label('More actions')
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->size(ActionSize::Small)
+                    ->color('primary')
+                    ->button(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

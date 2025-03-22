@@ -32,11 +32,19 @@ class InviteResource extends Resource
             ->schema([
                 Forms\Components\Select::make('users')
                     ->multiple()
+                    ->nullable()
                     ->relationship('users', 'name')
                     ->label('User')
                     ->searchable()
-                    ->preload()
-                    ->required(),
+                    ->preload(),
+                Forms\Components\TextInput::make('email')
+                    ->label('Email')
+                    ->nullable()
+                    ->email()
+                    ->placeholder('Masukkan email yang ingin diundang')
+                    ->requiredWithout('users')
+                    ->unique('invites', 'email')
+                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('invite_code')
                     ->disabled()
                     ->label('Invite Code'),
@@ -51,9 +59,12 @@ class InviteResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('users.name')
-                    ->label('Users')
+                    ->label('Kirim ke User')
                     ->searchable()
                     ->formatStateUsing(fn($record) => $record->users->pluck('name')->join(', ')),
+                TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable(),
                 TextColumn::make('invite_code')
                     ->label('Invite Code')
                     ->searchable(),
@@ -65,14 +76,34 @@ class InviteResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
                 Tables\Actions\Action::make('generateInvite')
                     ->label('Invite')
                     ->requiresConfirmation()
                     ->action(fn($record) => self::generateInvite($record))
                     ->icon('heroicon-o-paper-airplane')
                     ->color('success'),
+                Tables\Actions\Action::make('copyLink')
+                    ->label('Link')
+                    ->icon('heroicon-o-link')
+                    ->action(function ($record) {
+                        $inviteLink = url("/invite/{$record->invite_code}");
+                        return \Filament\Notifications\Notification::make()
+                            ->title('Link disalin!')
+                            ->body("Tautan undangan: $inviteLink")
+                            ->success()
+                            ->send();
+                    })
+                    ->extraAttributes(function ($record) {
+                        return [
+                            'onclick' => "navigator.clipboard.writeText('" . url("/invite/{$record->invite_code}") . "')",
+                            'data-invite-code' => $record->invite_code,
+                        ];
+                    })
+                    ->hidden(fn($record) => !$record->invite_code),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -107,8 +138,13 @@ class InviteResource extends Resource
             'expires_at' => $expiresAt,
         ]);
 
-        foreach ($record->users as $user) {
-            Mail::to($user->email)->send(new InviteMemberMail(url("/invite/{$inviteCode}")));
+        if ($record->email) {
+            Mail::to($record->email)->send(new InviteMemberMail(url("/invite/{$inviteCode}")));
         }
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
     }
 }

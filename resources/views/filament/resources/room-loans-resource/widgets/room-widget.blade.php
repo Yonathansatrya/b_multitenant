@@ -1,5 +1,5 @@
 <x-filament-widgets::widget>
     <x-filament::section>
-        {{-- Widget content --}}
+        @livewire('calendar-component', ['calendarView' => 'dayGridWeek'])
     </x-filament::section>
 </x-filament-widgets::widget>

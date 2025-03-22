@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use register;
 use Filament\Pages;
 use Filament\Panel;
 use App\Models\User;
@@ -10,6 +9,7 @@ use Filament\Widgets;
 use Filament\PanelProvider;
 use App\Models\Organization;
 use Filament\Pages\Dashboard;
+use App\Filament\Auth\Register;
 use App\Filament\Pages\CheckRoom;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Auth;
@@ -40,7 +40,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->registration()
+            ->registration(Register::class)
             ->colors([
                 'primary' => Color::Amber,
             ])

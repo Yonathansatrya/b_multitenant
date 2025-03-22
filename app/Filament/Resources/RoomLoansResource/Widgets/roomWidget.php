@@ -14,21 +14,31 @@ class RoomWidget extends CalendarWidget
 {
     public string $calendarView = 'dayGridMonth';
 
-    protected $listeners = ['changeCalendarView' => 'updateCalendarView', 'refreshCalendar' => '$refresh'];
+    protected $listeners = [
+        'handleupdatedCalendarView' => 'handleUpdatedCalendarView',
+        'refresh-room-widget' => 'refreshCalendar',
+    ];
 
     public function mount()
     {
         $this->calendarView = session('calendarView', 'dayGridMonth');
+        $this->getEvents();
+        // $this->dispatch('$refresh');
+        // dd($this->calendarView);
+        $this->refreshRecords();
     }
 
-    #[On('changeCalendarView')]
-    public function updateCalendarView($state)
+    #[On('updatedCalendarView')]
+    public function handleupdatedCalendarView($newView)
     {
-        $this->calendarView = $state;
-        session(['calendarView' => $state]);
-        session()->save();
-
-        $this->refreshRecords();
+        $this->calendarView = $newView;
+        session(['calendarView' => $newView]);
+        $this->mount();
+        // dd($this->calendarView);
+        // $this->dispatch('$refresh');
+        // $this->refreshRecords();
+        $this->refreshResources();
+        $this->dispatch('refreshWidget');
     }
 
     public function getEvents(array $fetchInfo = []): Collection|array
@@ -36,14 +46,8 @@ class RoomWidget extends CalendarWidget
         $startDate = Carbon::parse($fetchInfo['start'] ?? now()->startOfMonth());
         $endDate = Carbon::parse($fetchInfo['end'] ?? now()->endOfMonth());
 
-        if ($this->calendarView === 'timeGridWeek') {
-            $startDate = now()->startOfWeek();
-            $endDate = now()->endOfWeek();
-        } elseif ($this->calendarView === 'timeGridDay') {
-            $startDate = now()->startOfDay();
-            $endDate = now()->endOfDay();
-        }
-
+        // \Log::info('calendar yang di terima di event adalah:', ['view' => $this->calendarView]);=
+        // dd($this->calendarView);
         return RoomLoans::query()
             ->where('loan_status', 'Approve')
             ->whereBetween('start_date', [$startDate, $endDate])
@@ -56,7 +60,7 @@ class RoomWidget extends CalendarWidget
                     ->title($detail->room->room_name)
                     ->start(Carbon::parse($loan->start_date)->format('Y-m-d'))
                     ->end(Carbon::parse($loan->end_date)->format('Y-m-d'))
-                    ->allDay(true)
+                    ->allDay(true),
             ))->toArray();
     }
 }
