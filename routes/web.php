@@ -1,7 +1,5 @@
 <?php
 
-
-use App\Models\Invite;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MemberInviteController;
@@ -30,3 +28,4 @@ Route::post('/logout', function () {
     Auth::logout();
     return redirect('/admin/login');
 })->name('logout');
+
