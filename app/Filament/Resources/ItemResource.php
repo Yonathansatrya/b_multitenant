@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\ItemExporter;
+use App\Filament\Imports\ItemImporter;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Items;
@@ -67,10 +69,27 @@ class ItemResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
+            ->headerActions([
+                Tables\Actions\ImportAction::make()
+                    ->label('Import')
+                    ->color('success')
+                    ->icon('heroicon-o-inbox-arrow-down')
+                    ->importer(ItemImporter::class),
+                Tables\Actions\ExportAction::make()
+                    ->label('Export')
+                    ->icon('heroicon-o-document')
+                    ->color('danger')
+                    ->exporter(ItemExporter::class),
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+                Tables\Actions\ExportBulkAction::make()
+                    ->label('Export')
+                    ->icon('heroicon-o-document')
+                    ->color('danger')
+                    ->exporter(ItemExporter::class),
             ]);
     }
 

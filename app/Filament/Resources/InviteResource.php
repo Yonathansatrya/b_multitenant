@@ -8,14 +8,15 @@ use Filament\Tables;
 use App\Models\Invite;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use App\Mail\InviteMemberMail;
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\Mail;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\InviteResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Str;
-use App\Mail\InviteMemberMail;
 use App\Filament\Resources\InviteResource\RelationManagers;
 
 class InviteResource extends Resource
@@ -79,15 +80,22 @@ class InviteResource extends Resource
                 Tables\Actions\Action::make('generateInvite')
                     ->label('Invite')
                     ->requiresConfirmation()
-                    ->action(fn($record) => self::generateInvite($record))
-                    ->icon('heroicon-o-paper-airplane')
-                    ->color('success'),
+                    ->action(function ($record) {
+                        self::generateInvite($record);
+                        $inviteLink = url("/invite/{$record->invite_code}");
+                        Notification::make()
+                            ->title('Invite Generated!')
+                            ->body("Invitation link: $inviteLink")
+                            ->success()
+                            ->send();
+                    })
+                    ->icon('heroicon-o-paper-airplane'),
                 Tables\Actions\Action::make('copyLink')
                     ->label('Link')
                     ->icon('heroicon-o-link')
                     ->action(function ($record) {
                         $inviteLink = url("/invite/{$record->invite_code}");
-                        return \Filament\Notifications\Notification::make()
+                        return Notification::make()
                             ->title('Link disalin!')
                             ->body("Tautan undangan: $inviteLink")
                             ->success()

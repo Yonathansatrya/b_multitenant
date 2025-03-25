@@ -11,6 +11,7 @@
                         Keluar Dari Organisasi
                     </x-filament::button>
                 </x-slot>
+                
                 <x-slot name="title">
                     Konfirmasi Keluar
                 </x-slot>
