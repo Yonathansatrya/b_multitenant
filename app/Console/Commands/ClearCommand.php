@@ -31,6 +31,7 @@ class ClearCommand extends Command
         Artisan::call('config:clear');
         Artisan::call('route:clear');
         Artisan::call('view:clear');
+        Artisan::call('optimize:clear');
         Artisan::call('optimize');
 
         $this->info('All caches cleared and application optimized successfully!');

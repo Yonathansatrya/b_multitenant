@@ -34,7 +34,6 @@ class RegisterOrganization extends RegisterTenant
             'slug' => $data['slug'],
         ]);
 
-        // Asumsikan relasi "members" sudah didefinisikan pada model Organization
         $organization->members()->attach(auth()->user());
 
         return $organization;

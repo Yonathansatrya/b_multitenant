@@ -21,7 +21,7 @@ class MembersResource extends Resource
 {
     protected static ?string $tenantRelationName = 'member';
     protected static ?string $model = OrganizationUser::class;
-    protected static ?string $label = 'Member';
+    protected static ?string $navigationLabel = 'Member';
     protected static ?string $navigationGroup = "Organizations";
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -75,11 +75,10 @@ class MembersResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

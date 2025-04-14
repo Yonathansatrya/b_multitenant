@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\ItemExporter;
+use App\Filament\Imports\ItemImporter;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Items;
@@ -16,7 +18,8 @@ use App\Filament\Resources\ItemResource\RelationManagers;
 
 class ItemResource extends Resource
 {
-    protected static ?string $label = 'Barang';
+    protected static ?string $navigationGroup = 'Barang';
+    protected static ?string $navigationLabel = 'Barang';
     protected static ?string $model = Items::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     public static function form(Form $form): Form
@@ -66,10 +69,27 @@ class ItemResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
+            ->headerActions([
+                Tables\Actions\ImportAction::make()
+                    ->label('Import')
+                    ->color('success')
+                    ->icon('heroicon-o-inbox-arrow-down')
+                    ->importer(ItemImporter::class),
+                Tables\Actions\ExportAction::make()
+                    ->label('Export')
+                    ->icon('heroicon-o-document')
+                    ->color('danger')
+                    ->exporter(ItemExporter::class),
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+                Tables\Actions\ExportBulkAction::make()
+                    ->label('Export')
+                    ->icon('heroicon-o-document')
+                    ->color('danger')
+                    ->exporter(ItemExporter::class),
             ]);
     }
 
@@ -87,5 +107,10 @@ class ItemResource extends Resource
             'create' => Pages\CreateItem::route('/create'),
             'edit' => Pages\EditItem::route('/{record}/edit'),
         ];
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
     }
 }

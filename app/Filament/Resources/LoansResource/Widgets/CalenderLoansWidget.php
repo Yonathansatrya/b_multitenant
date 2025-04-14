@@ -6,7 +6,6 @@ use App\Models\Loan;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Guava\Calendar\ValueObjects\Event;
-use Filament\Notifications\Notification;
 use Guava\Calendar\Actions\CreateAction;
 use App\Filament\Resources\LoansResource;
 use Guava\Calendar\Widgets\CalendarWidget;
@@ -17,10 +16,11 @@ class CalenderLoansWidget extends CalendarWidget
     protected string $calendarView = 'dayGridMonth';
     protected bool $eventClickEnabled = true;
     protected bool $dateClickEnabled = true;
+    public ?array $selectedLoan = null;
 
     public function getEvents(array $fetchInfo = []): Collection|array
     {
-        return Loan::all()->map(function ($loan) {
+        return Loan::with('organization.organization_loan.organization')->get()->map(function ($loan) {
 
             $totalitem = $loan->loanItems->sum('quantity');
 
@@ -34,27 +34,47 @@ class CalenderLoansWidget extends CalendarWidget
                 ->title("Peminjaman oleh {$loan->user->name} ({$totalitem} barang)")
                 ->start(Carbon::parse($loan->loan_date))
                 ->end(Carbon::parse($loan->loan_end_date))
-                ->backgroundColor($color);
+                ->backgroundColor($color)
+                ->extendedProps([
+                    "user" => $loan->user->name,
+                    "organization" => optional($loan->organization?->organization_loan?->organization)->name ?? 'Tidak ada organisasi',
+                    "loan_date" => $loan->loan_date,
+                    "loan_end_date" => $loan->loan_end_date,
+                    "status" => $loan->status,
+                    "deskripsi" => $loan->description,
+                    "items" => $loan->loanItems->map(fn($li) => [
+                        "name" => $li->item->name,
+                        "quantity" => $li->quantity,
+                    ])->toArray()
+                ]);
         })->toArray();
     }
 
     public function onEventClick(array $info = [], ?string $action = null): void
     {
-        $eventId = $info['event']['extendedProps']['id'] ?? null;
+        if (!isset($info['event'])) {
+            return;
+        }
 
-        $loan = Loan::find($eventId);
-        $this->dispatch('open-modal', id: 'edit-user');
-
-
-        // $this->dispatch('open-modal', [
-        //     'title' => "Detail Peminjaman",
-        //     'content' =>
-        //         "<strong>Peminjam:</strong> " . $loan->user->name . "<br>" .
-        //         "<strong>Organisasi:</strong> " . ($loan->organizationLoan->name ?? 'Tidak Ada Organisasi') . "<br>" .
-        //         "<strong>Deskripsi:</strong> " . $loan->description . "<br>" .
-        //         "<strong>Status:</strong> " . $loan->status . "<br>" ,
-        // ]);
+        $this->dispatch('open-modal', id: 'view-detail', data: $info['event']['extendedProps']);
     }
+
+    // public function onEventClick(array $info = []): void
+    // {
+    //     do something on click
+    //     $info contains the event data:
+    //     $info['event'];
+    //     $info['view'] - the view object
+
+    //     $this->dispatch('open-modal', id: 'edit-user');
+
+    // \Log::info('Dispatch open-modal dengan data:', ['data' => $info['event']['extendedProps'] ?? []]);
+    // $this->dispatch('open-modal', [
+    //     'id' => 'view-detail',
+    //     'data' => $info['event']['extendedProps'],
+    // ]);
+    // }
+
 
     // public function getDateClickContextMenuActions(): array
     // {

@@ -4,26 +4,27 @@ namespace App\Providers\Filament;
 
 use Filament\Pages;
 use Filament\Panel;
-use App\Models\Organization;
 use App\Models\User;
 use Filament\Widgets;
 use Filament\PanelProvider;
+use App\Models\Organization;
 use Filament\Pages\Dashboard;
+use App\Filament\Auth\Register;
+use App\Filament\Pages\CheckRoom;
 use Filament\Support\Colors\Color;
-use Filament\Navigation\NavigationItem;
-use App\Filament\Resources\UserResource;
-use Filament\Navigation\NavigationGroup;
-use App\Filament\Resources\PostsResource;
+use Illuminate\Support\Facades\Auth;
+use App\Filament\Pages\NoOrganization;
 use Filament\Http\Middleware\Authenticate;
-use App\Filament\Pages\Tenancy\RegisterOrganization;
-use App\Filament\Pages\Tenancy\EditOrganizationProfile;
-use App\Filament\Resources\CustomerResource;
+use App\Http\Middleware\EnsureOrganization;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
+use App\Http\Middleware\EnsureUserHasOrganization;
+use App\Filament\Pages\Tenancy\RegisterOrganization;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Pages\Tenancy\EditOrganizationProfile;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -39,6 +40,8 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->registration(Register::class)
+            ->databaseNotifications()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -62,6 +65,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                EnsureOrganization::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
@@ -76,12 +80,17 @@ class AdminPanelProvider extends PanelProvider
             ->tenantProfile(EditOrganizationProfile::class)
             ->tenantMiddleware([
                 SyncShieldTenant::class,
-                \Hasnayeen\Themes\Http\Middleware\SetTheme::class
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class,
             ], isPersistent: true)
             ->plugins([
                 FilamentShieldPlugin::make(),
                 \Hasnayeen\Themes\ThemesPlugin::make(),
-                \TomatoPHP\FilamentInvoices\FilamentInvoicesPlugin::make()
             ]);
+    }
+
+    private function canRegisterOrganization(User $user): bool
+    {
+        $user = Auth::user();
+        return $user && $user->organization_id;
     }
 }

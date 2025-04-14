@@ -2,20 +2,24 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TypeItemResource\Pages;
-use App\Filament\Resources\TypeItemResource\RelationManagers;
-use App\Models\TypeItem;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\TypeItem;
+use Filament\Forms\Form;
+use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Exports\TypeItemExporter;
+use App\Filament\Imports\ItemTypeImporter;
+use App\Filament\Resources\TypeItemResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\TypeItemResource\RelationManagers;
 
 class TypeItemResource extends Resource
 {
-    protected static ?string $label = 'Tipe Barang';
+    protected static ?string $navigationGroup = 'Barang';
+    protected static ?string $navigationLabel = 'Tipe Barang';
     protected static ?string $model = TypeItem::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -52,10 +56,27 @@ class TypeItemResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
+            ->HeaderActions([
+                Tables\Actions\ImportAction::make('Import Tipe Item')
+                    ->label('Import')
+                    ->icon('heroicon-o-inbox-arrow-down')
+                    ->color('success')
+                    ->importer(ItemTypeImporter::class),
+                Tables\Actions\ExportAction::make()
+                    ->label('Export')
+                    ->icon('heroicon-o-document')
+                    ->color('danger')
+                    ->exporter(TypeItemExporter::class),
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+                Tables\Actions\ExportBulkAction::make()
+                    ->label('Export')
+                    ->icon('heroicon-o-document')
+                    ->color('danger')
+                    ->exporter(TypeItemExporter::class),
             ]);
     }
 
@@ -73,5 +94,10 @@ class TypeItemResource extends Resource
             'create' => Pages\CreateTypeItem::route('/create'),
             'edit' => Pages\EditTypeItem::route('/{record}/edit'),
         ];
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
     }
 }

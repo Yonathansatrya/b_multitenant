@@ -65,4 +65,9 @@ class User extends Authenticatable implements HasTenants
     {
         return $this->hasMany(Loan::class);
     }
+
+    public function invites()
+    {
+        return $this->belongsToMany(Invite::class, 'invite_user')->withTimestamps();
+    }
 }

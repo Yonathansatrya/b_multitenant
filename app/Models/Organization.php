@@ -20,6 +20,11 @@ class Organization extends Model
             ->withTimestamps();
     }
 
+    public function invites()
+    {
+        return $this->hasMany(Invite::class);
+    }
+
     public function organizationUsers(): HasMany
     {
         return $this->hasMany(OrganizationUser::class);
@@ -43,5 +48,20 @@ class Organization extends Model
     public function loans()
     {
         return $this->hasMany(Loan::class);
+    }
+
+    public function organization_loan()
+    {
+        return $this->hasOne(Loan::class, 'organization_loan');
+    }
+
+    public function rooms()
+    {
+        return $this->hasMany(Room::class);
+    }
+
+    public function roomLoans()
+    {
+        return $this->hasMany(RoomLoans::class);
     }
 }

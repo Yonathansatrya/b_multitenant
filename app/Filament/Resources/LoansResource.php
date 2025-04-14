@@ -26,7 +26,8 @@ use App\Filament\Resources\LoansResource\Widgets\CalenderLoansWidget;
 
 class LoansResource extends Resource
 {
-    protected static ?string $label = 'Peminjaman';
+    protected static ?string $navigationGroup = 'Barang';
+    protected static ?string $navigationLabel = 'Peminjaman Barang';
     protected static ?string $model = Loan::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -139,17 +140,22 @@ class LoansResource extends Resource
         ];
     }
 
+
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListLoans::route('/'),
+            'index' => Pages\CalenderLoans::route('/'),
+            'list' => Pages\ListLoans::route('/list'),
             'create' => Pages\CreateLoans::route('/create'),
             'edit' => Pages\EditLoans::route('/{record}/edit'),
             'calendar' => Pages\CalenderLoans::route('/calender'),
         ];
     }
+        ];
+    }
+
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
+        return auth()->user()?->hasAnyRole(['Super Admin', 'Customer Manager']) ?? false;
     }
 }
