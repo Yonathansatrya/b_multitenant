@@ -16,10 +16,13 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\View\LegacyComponents\Widget;
 use App\Filament\Resources\LoansResource\Pages;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\LoansResource\RelationManagers;
+use App\Filament\Resources\LoansResource\Widgets\CalenderLoansWidget;
+
 
 class LoansResource extends Resource
 {
@@ -142,16 +145,9 @@ class LoansResource extends Resource
             'index' => Pages\ListLoans::route('/'),
             'create' => Pages\CreateLoans::route('/create'),
             'edit' => Pages\EditLoans::route('/{record}/edit'),
+            'calendar' => Pages\CalenderLoans::route('/calender'),
         ];
     }
-
-    public static function getWidgets(): array
-    {
-        return [
-            //   Widgets\CalenderLoansWidget::class,
-        ];
-    }
-
     public static function shouldRegisterNavigation(): bool
     {
         return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
